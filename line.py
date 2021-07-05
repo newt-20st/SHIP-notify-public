@@ -17,10 +17,10 @@ def main(data):
     try:
         for a in HighConData:
             message1 += "\n・連絡事項:" + \
-                a[1] + "-" + a[2] + "-" + \
-                a[3].replace("\n", "")
-            if a[4].replace("\n", "") != "":
-                message1 += "\n《" + a[4].replace("\n", "") + "》"
+                a["date"] + "-" + a["folder"] + "-" + \
+                a["title"].replace("\n", "")
+            if a["description"].replace("\n", "") != "":
+                message1 += "\n《" + a["description"].replace("\n", "") + "》"
     except Exception as e:
         message1 = "\n・連絡事項取得エラー:更新の有無を取得できませんでした"
         return str(e)
@@ -28,8 +28,8 @@ def main(data):
     try:
         for a in HighStudyData:
             message2 += "\n・学習教材:" + \
-                a[1] + "-" + a[2] + "-" + \
-                a[3].replace("\n", "")
+                a["date"] + "-" + a["folder"] + "-" + \
+                a["title"].replace("\n", "")
     except Exception as e:
         message2 = "\n・学習教材取得エラー:更新の有無を取得できませんでした"
         return str(e)

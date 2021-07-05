@@ -14,8 +14,6 @@ from firebase_admin import firestore
 
 load_dotenv()
 
-DATABASE_URL = os.environ['DATABASE_URL']
-
 config = {
     'apiKey': os.environ['FIREBASE_API_KEY'],
     'authDomain': os.environ['FIREBASE_AUTH_DOMAIN'],
@@ -34,7 +32,9 @@ if not firebase_admin._apps:
     'private_key': os.environ['FIREBASE_PRIVATE_KEY'].replace('\\n', '\n')
     })
     firebase_admin.initialize_app(CREDENTIALS,{'databaseURL': 'https://'+os.environ['FIREBASE_PROJECT_ID']+'.firebaseio.com'})
+
 db = firestore.client()
+storage = firebase.storage()
 
 def main():
     now = datetime.datetime.now()
@@ -119,13 +119,13 @@ def main():
         conTrs.pop(0)
         conList = []
         for conTr in conTrs:
-            time.sleep(1)
             eachconList = {}
             conTrTds = conTr.find_all('td')
             try:
                 stage = conTrTds[2].find('a').get('onclick')
                 conId = re.findall("'([^']*)'", stage)
                 if int(conId[0]) not in gotList:
+                    print(conId[0]+" is not in the database.")
                     try:
                         eachconList["id"] = conId
                         driver.get(
@@ -148,12 +148,11 @@ def main():
                                     filepath = 'D:\Downloads/' + result.group(1)
                                 else:
                                     filepath = DOWNLOAD_DIR + '/' + result.group(1)
-                                storage = firebase.storage()
                                 try:
                                     storage.child(
-                                        'pdf/high-con/'+str(eachconList[0][0])+'/'+result.group(1)).put(filepath)
+                                        'pdf/high-con/'+str(eachconList["id"][0])+'/'+result.group(1)).put(filepath)
                                     conPageLinkList.append(storage.child(
-                                        'pdf/high-con/'+str(eachconList[0][0])+'/'+result.group(1)).get_url(token=None))
+                                        'pdf/high-con/'+str(eachconList["id"][0])+'/'+result.group(1)).get_url(token=None))
                                 except Exception as e:
                                     print(str(e))
                             eachconList["link"] = conPageLinkList
@@ -180,13 +179,13 @@ def main():
         studyTrs.pop(0)
         studyList = []
         for studyTr in studyTrs:
-            time.sleep(1)
             eachstudyList = {}
             studyTrTds = studyTr.find_all('td')
             try:
                 stage = studyTrTds[2].find('a').get('onclick')
                 studyId = re.findall("'([^']*)'", stage)
                 if int(studyId[0]) not in gotList:
+                    print(studyId[0]+" is not in the database.")
                     try:
                         eachstudyList["id"] = studyId
                         driver.get(
@@ -211,12 +210,11 @@ def main():
                                     filepath = 'D:\Downloads/' + result.group(1)
                                 else:
                                     filepath = DOWNLOAD_DIR + '/' + result.group(1)
-                                storage = firebase.storage()
                                 try:
                                     storage.child(
-                                        'pdf/high-study/'+str(eachstudyList[0][0])+'/'+result.group(1)).put(filepath)
+                                        'pdf/high-study/'+str(eachstudyList["id"][0])+'/'+result.group(1)).put(filepath)
                                     studyPageLinkList.append(storage.child(
-                                        'pdf/high-study/'+str(eachstudyList[0][0])+'/'+result.group(1)).get_url(token=None))
+                                        'pdf/high-study/'+str(eachstudyList["id"][0])+'/'+result.group(1)).get_url(token=None))
                                 except Exception as e:
                                     print(str(e))
                             eachstudyList["link"] = studyPageLinkList
@@ -245,13 +243,13 @@ def main():
         schoolNewsTrs.pop(0)
         schoolNewsList = []
         for schoolNewsTr in schoolNewsTrs:
-            time.sleep(1)
             eachSchoolNewsList = {}
             schoolNewsTrTds = schoolNewsTr.find_all('td')
             try:
                 stage = schoolNewsTrTds[2].find('a').get('onclick')
                 schoolNewsId = re.findall("'([^']*)'", stage)
                 if int(schoolNewsId[0]) not in gotList:
+                    print(schoolNewsId[0]+" is not in the database.")
                     try:
                         eachSchoolNewsList["id"] = schoolNewsId
                         driver.get(
@@ -273,12 +271,11 @@ def main():
                                     filepath = 'D:\Downloads/' + result.group(1)
                                 else:
                                     filepath = DOWNLOAD_DIR + '/' + result.group(1)
-                                storage = firebase.storage()
                                 try:
                                     storage.child(
-                                        'pdf/high-schoolNews/'+str(eachSchoolNewsList[0][0])+'/'+result.group(1)).put(filepath)
+                                        'pdf/high-schoolNews/'+str(eachSchoolNewsList["id"][0])+'/'+result.group(1)).put(filepath)
                                     schoolNewsPageLinkList.append(storage.child(
-                                        'pdf/high-schoolNews/'+str(eachSchoolNewsList[0][0])+'/'+result.group(1)).get_url(token=None))
+                                        'pdf/high-schoolNews/'+str(eachSchoolNewsList["id"][0])+'/'+result.group(1)).get_url(token=None))
                                 except Exception as e:
                                     print(str(e))
                             eachSchoolNewsList["link"] = schoolNewsPageLinkList
