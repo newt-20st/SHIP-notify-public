@@ -2,27 +2,102 @@
     "pageList": [
         {
             "name": "高校連絡事項",
-            "collectionName": "highCon"
+            "collectionName": "highCon",
+            "props": [
+                "id",
+                "date",
+                "folder",
+                "title",
+                "description",
+                "link",
+                "timestamp"
+            ],
+            "color": [
+                52,
+                235,
+                79
+            ]
         },
         {
             "name": "高校学習教材",
-            "collectionName": "highStudy"
+            "collectionName": "highStudy",
+            "props": [
+                "id",
+                "date",
+                "folder",
+                "title",
+                "link",
+                "timestamp"
+            ],
+            "color": [
+                52,
+                229,
+                235
+            ]
         },
         {
             "name": "高校学校通信",
-            "collectionName": "highSchoolNews"
+            "collectionName": "highSchoolNews",
+            "props": [
+                "id",
+                "date",
+                "folder",
+                "title",
+                "link"
+            ],
+            "color": [
+                242,
+                245,
+                66
+            ]
         },
         {
             "name": "中学連絡事項",
-            "collectionName": "juniorCon"
+            "collectionName": "juniorCon",
+            "props": [
+                "id",
+                "date",
+                "folder",
+                "title",
+                "description"
+            ],
+            "color": [
+                52,
+                235,
+                79
+            ]
         },
         {
             "name": "中学学習教材",
-            "collectionName": "juniorStudy"
+            "collectionName": "juniorStudy",
+            "props": [
+                "id",
+                "date",
+                "folder",
+                "title",
+                "timestamp"
+            ],
+            "color": [
+                52,
+                229,
+                235
+            ]
         },
         {
             "name": "中学学校通信",
-            "collectionName": "juniorSchoolNews"
+            "collectionName": "juniorSchoolNews",
+            "props": [
+                "id",
+                "date",
+                "folder",
+                "title",
+                "timestamp"
+            ],
+            "color": [
+                242,
+                245,
+                66
+            ]
         }
     ]
 }

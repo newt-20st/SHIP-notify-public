@@ -4,6 +4,7 @@ import random
 import re
 import time
 
+from dotenv import load_dotenv
 import pyrebase
 from bs4 import BeautifulSoup
 from selenium import webdriver
@@ -11,6 +12,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
+load_dotenv()
 
 DATABASE_URL = os.environ['DATABASE_URL']
 
@@ -118,14 +120,14 @@ def main():
         conList = []
         for conTr in conTrs:
             time.sleep(1)
-            eachconList = []
+            eachconList = {}
             conTrTds = conTr.find_all('td')
             try:
                 stage = conTrTds[2].find('a').get('onclick')
                 conId = re.findall("'([^']*)'", stage)
                 if int(conId[0]) not in gotList:
                     try:
-                        eachconList.append(conId)
+                        eachconList["id"] = conId
                         driver.get(
                             "https://ship.sakae-higashi.jp/sub_window_anke/?obj_id="+conId[0]+"&t=3")
                         conEachPageSoup = BeautifulSoup(
@@ -133,7 +135,7 @@ def main():
                         conPageMain = conEachPageSoup.find_all(class_='ac')[0].find_all(class_='bg_w')[0]
                         conPageDescription = conPageMain.find_all(
                             "table")[-2].text.replace("\n", "")
-                        eachconList.append(conPageDescription)
+                        eachconList["description"] = conPageDescription
                         if schooltype == "high":
                             conPageLinks = conPageMain.find_all("a")
                             conPageLinkList = []
@@ -154,17 +156,17 @@ def main():
                                         'pdf/high-con/'+str(eachconList[0][0])+'/'+result.group(1)).get_url(token=None))
                                 except Exception as e:
                                     print(str(e))
-                            eachconList.append(conPageLinkList)
+                            eachconList["link"] = conPageLinkList
                     except Exception as e:
                         print(str(e))
-                        eachconList.append([0, 0])
-                        eachconList.append("")
-                    eachconList.append(conTrTds[0].text)
+                        eachconList["id"] = [0, 0]
+                        eachconList["description"] = ""
+                    eachconList["date"] = conTrTds[0].text
                     try:
-                        eachconList.append(conTrTds[1].find('span').get('title'))
+                        eachconList["folder"] = conTrTds[1].find('span').get('title')
                     except:
-                        eachconList.append("")
-                    eachconList.append(conTrTds[2].text.replace("\n", ""))
+                        eachconList["folder"] = ""
+                    eachconList["title"] = conTrTds[2].text.replace("\n", "")
                     conList.append(eachconList)
             except Exception as e:
                 print(str(e))
@@ -179,14 +181,14 @@ def main():
         studyList = []
         for studyTr in studyTrs:
             time.sleep(1)
-            eachstudyList = []
+            eachstudyList = {}
             studyTrTds = studyTr.find_all('td')
             try:
                 stage = studyTrTds[2].find('a').get('onclick')
                 studyId = re.findall("'([^']*)'", stage)
                 if int(studyId[0]) not in gotList:
                     try:
-                        eachstudyList.append(studyId)
+                        eachstudyList["id"] = studyId
                         driver.get(
                             "https://ship.sakae-higashi.jp/sub_window_study/?obj_id="+studyId[0]+"&t=7")
                         studyEachPageSoup = BeautifulSoup(
@@ -217,20 +219,19 @@ def main():
                                         'pdf/high-study/'+str(eachstudyList[0][0])+'/'+result.group(1)).get_url(token=None))
                                 except Exception as e:
                                     print(str(e))
-                            eachstudyList.append(studyPageLinkList)
+                            eachstudyList["link"] = studyPageLinkList
                     except Exception as e:
                         print(str(e))
-                        eachstudyList.append([0, 0])
-                    eachstudyList.append(studyTrTds[0].text)
+                        eachstudyList["id"] = [0, 0]
+                    eachstudyList["date"] = studyTrTds[0].text
                     try:
-                        eachstudyList.append(
-                            studyTrTds[1].find('span').get('title'))
+                        eachstudyList["folder"] = studyTrTds[1].find('span').get('title')
                     except:
-                        eachstudyList.append("")
+                        eachstudyList["folder"] = ""
                     try:
-                        eachstudyList.append(studyTrTds[2].text.replace("\n", ""))
+                        eachstudyList["title"] = studyTrTds[2].text.replace("\n", "")
                     except:
-                        eachstudyList.append("")
+                        eachstudyList["title"] = ""
                     studyList.append(eachstudyList)
             except Exception as e:
                 print(str(e))
@@ -245,14 +246,14 @@ def main():
         schoolNewsList = []
         for schoolNewsTr in schoolNewsTrs:
             time.sleep(1)
-            eachSchoolNewsList = []
+            eachSchoolNewsList = {}
             schoolNewsTrTds = schoolNewsTr.find_all('td')
             try:
                 stage = schoolNewsTrTds[2].find('a').get('onclick')
                 schoolNewsId = re.findall("'([^']*)'", stage)
                 if int(schoolNewsId[0]) not in gotList:
                     try:
-                        eachSchoolNewsList.append(schoolNewsId)
+                        eachSchoolNewsList["id"] = schoolNewsId
                         driver.get(
                             "https://ship.sakae-higashi.jp/sub_window/?obj_id="+schoolNewsId[0]+"&t=4")
                         schoolNewsEachPageSoup = BeautifulSoup(
@@ -260,7 +261,7 @@ def main():
                         schoolNewsPageMain = schoolNewsEachPageSoup.find_all(class_='ac')[0].find_all(class_='bg_w')[0]
                         schoolNewsPageDescription = schoolNewsPageMain.find_all(
                             "table")[-2].text.replace("\n", "")
-                        eachSchoolNewsList.append(schoolNewsPageDescription)
+                        eachSchoolNewsList["description"] = schoolNewsPageDescription
                         if schooltype == "high":
                             schoolNewsPageLinks = schoolNewsPageMain.find_all("a")
                             schoolNewsPageLinkList = []
@@ -280,17 +281,17 @@ def main():
                                         'pdf/high-schoolNews/'+str(eachSchoolNewsList[0][0])+'/'+result.group(1)).get_url(token=None))
                                 except Exception as e:
                                     print(str(e))
-                            eachSchoolNewsList.append(schoolNewsPageLinkList)
+                            eachSchoolNewsList["link"] = schoolNewsPageLinkList
                     except Exception as e:
                         print(str(e))
-                        eachSchoolNewsList.append([0, 0])
-                        eachSchoolNewsList.append("")
-                    eachSchoolNewsList.append(schoolNewsTrTds[0].text)
+                        eachSchoolNewsList["id"] = [0, 0]
+                        eachSchoolNewsList["description"] = ""
+                    eachSchoolNewsList["date"] = schoolNewsTrTds[0].text
                     try:
-                        eachSchoolNewsList.append(schoolNewsTrTds[1].find('span').get('title'))
+                        eachSchoolNewsList["folder"] = schoolNewsTrTds[1].find('span').get('title')
                     except:
-                        eachSchoolNewsList.append("")
-                    eachSchoolNewsList.append(schoolNewsTrTds[2].text.replace("\n", ""))
+                        eachSchoolNewsList["folder"] = ""
+                    eachSchoolNewsList["title"] = schoolNewsTrTds[2].text.replace("\n", "")
                     schoolNewsList.append(eachSchoolNewsList)
             except Exception as e:
                 print(str(e))
@@ -309,15 +310,15 @@ def main():
 
     juniorConSendData = []
     for i in reversed(juniorConList):
-        if i[0][0] != 0 and i[0][0] not in gotList:
-            date = i[2].replace("年", "/").replace("月", "/").replace("日", "")
-            juniorConSendData.append([i[0][0], date, i[3], i[4], i[1]])
+        if i["id"][0] != 0 and i["id"][0] not in gotList:
+            i["date"] = i["date"].replace("年", "/").replace("月", "/").replace("日", "")
+            juniorConSendData.append(i)
             db.collection('juniorCon').add({
-                'id': int(i[0][0]),
-                'date': date,
-                'folder': i[3],
-                'title': i[4],
-                'description': i[1],
+                'id': int(i["id"][0]),
+                'date': i["date"],
+                'folder': i["folder"],
+                'title': i["title"],
+                'description': i["description"],
                 'timestamp': firestore.SERVER_TIMESTAMP
             })
     docDict = db.collection('count').document('juniorCon').get().to_dict()
@@ -327,14 +328,14 @@ def main():
     
     juniorStudySendData = []
     for i in reversed(juniorStudyList):
-        if i[0][0] != 0 and i[0][0] not in gotList:
-            date = i[1].replace("年", "/").replace("月", "/").replace("日", "")
-            juniorStudySendData.append([i[0][0], date, i[2], i[3]])
+        if i["id"][0] != 0 and i["id"][0] not in gotList:
+            i["date"] = i["date"].replace("年", "/").replace("月", "/").replace("日", "")
+            juniorStudySendData.append(i)
             db.collection('juniorStudy').add({
-                'id': int(i[0][0]),
-                'date': date,
-                'folder': i[2],
-                'title': i[3],
+                'id': int(i["id"][0]),
+                'date': i["date"],
+                'folder': i["folder"],
+                'title': i["title"],
                 'timestamp': firestore.SERVER_TIMESTAMP
             })
     docDict = db.collection('count').document('juniorStudy').get().to_dict()
@@ -344,14 +345,14 @@ def main():
     
     juniorSchoolNewsSendData = []
     for i in reversed(juniorSchoolNewsList):
-        if i[0][0] != 0 and i[0][0] not in gotList:
-            date = i[2].replace("年", "/").replace("月", "/").replace("日", "")
-            juniorSchoolNewsSendData.append([i[0][0], date, i[3], i[4]])
+        if i["id"][0] != 0 and i["id"][0] not in gotList:
+            i["date"] = i["date"].replace("年", "/").replace("月", "/").replace("日", "")
+            juniorSchoolNewsSendData.append(i)
             db.collection('juniorSchoolNews').add({
-                'id': int(i[0][0]),
-                'date': date,
-                'folder': i[3],
-                'title': i[4],
+                'id': int(i["id"][0]),
+                'date': i["date"],
+                'folder': i["folder"],
+                'title': i["title"],
                 'timestamp': firestore.SERVER_TIMESTAMP
             })
     docDict = db.collection('count').document('juniorSchoolNews').get().to_dict()
@@ -361,16 +362,16 @@ def main():
     
     highConSendData = []
     for i in reversed(highConList):
-        if i[0][0] != 0 and i[0][0] not in gotList:
-            date = i[3].replace("年", "/").replace("月", "/").replace("日", "")
-            highConSendData.append([i[0][0], date, i[4], i[5], i[1]])
+        if i["id"][0] != 0 and i["id"][0] not in gotList:
+            i["date"] = i["date"].replace("年", "/").replace("月", "/").replace("日", "")
+            highConSendData.append(i)
             db.collection('highCon').add({
-                'id': int(i[0][0]),
-                'date': date,
-                'folder': i[4],
-                'title': i[5],
-                'description': i[1],
-                'link': i[2],
+                'id': int(i["id"][0]),
+                'date': i["date"],
+                'folder': i["folder"],
+                'title': i["title"],
+                'description': i["description"],
+                'link': i["link"],
                 'timestamp': firestore.SERVER_TIMESTAMP
             })
     docDict = db.collection('count').document('highCon').get().to_dict()
@@ -380,15 +381,15 @@ def main():
     
     highStudySendData = []
     for i in reversed(highStudyList):
-        if i[0][0] != 0 and i[0][0] not in gotList:
-            date = i[2].replace("年", "/").replace("月", "/").replace("日", "")
-            highStudySendData.append([i[0][0], date, i[3], i[4]])
+        if i["id"][0] != 0 and i["id"][0] not in gotList:
+            i["date"] = i["date"].replace("年", "/").replace("月", "/").replace("日", "")
+            highStudySendData.append(i)
             db.collection('highStudy').add({
-                'id': int(i[0][0]),
-                'date': date,
-                'folder': i[3],
-                'title': i[4],
-                'link': i[1],
+                'id': int(i["id"][0]),
+                'date': i["date"],
+                'folder': i["folder"],
+                'title': i["title"],
+                'link': i["link"],
                 'timestamp': firestore.SERVER_TIMESTAMP
             })
     docDict = db.collection('count').document('highStudy').get().to_dict()
@@ -398,15 +399,15 @@ def main():
     
     highSchoolNewsSendData = []
     for i in reversed(highSchoolNewsList):
-        if i[0][0] != 0 and i[0][0] not in gotList:
-            date = i[3].replace("年", "/").replace("月", "/").replace("日", "")
-            highSchoolNewsSendData.append([i[0][0], date, i[4], i[5], i[2]])
+        if i["id"][0] != 0 and i["id"][0] not in gotList:
+            i["date"] = i["date"].replace("年", "/").replace("月", "/").replace("日", "")
+            highSchoolNewsSendData.append(i)
             db.collection('highSchoolNews').add({
-                'id': int(i[0][0]),
-                'date': date,
-                'folder': i[4],
-                'title': i[5],
-                'link': i[2],
+                'id': int(i["id"][0]),
+                'date': i["date"],
+                'folder': i["folder"],
+                'title': i["title"],
+                'link': i["link"],
                 'timestamp': firestore.SERVER_TIMESTAMP
             })
     docDict = db.collection('count').document('highSchoolNews').get().to_dict()

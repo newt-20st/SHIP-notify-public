@@ -289,7 +289,7 @@ async def on_message(message):
                     nhkAreaLen = idList.index(nhkAreaId)
                     body = ''
                     for c, eachData in enumerate(jsonChannelData, 1):
-                        body += '\n`' + str(c+1) + '` **'+i['title']+'**'
+                        body += '\n`' + str(c+1) + '` **'+eachData['title']+'**'
                     await message.channel.send('📺チャンネルを選択してください'+body)
                     try:
                         nhkChannelMessage = await client.wait_for("message", check=check, timeout=60)
@@ -545,18 +545,18 @@ async def getData():
     if len(result['juniorCon']) != 0:
         for conData in result['juniorCon']:
             try:
-                if conData[3] != '':
+                if conData['title'] != '':
                     embed = discord.Embed(
-                        title=conData[3], description="投稿: "+conData[1], color=discord.Colour.from_rgb(52, 235, 79))
+                        title=conData['title'], description="投稿: "+conData['date'], color=discord.Colour.from_rgb(52, 235, 79))
                 else:
                     embed = discord.Embed(
-                        title="中学連絡事項更新通知", description="投稿: "+conData[1], color=discord.Colour.from_rgb(52, 235, 79))
-                embed.add_field(name="id", value=conData[0])
-                if conData[2] != '':
-                    embed.add_field(name="path", value=conData[2])
-                if conData[4] != '':
+                        title="中学連絡事項更新通知", description="投稿: "+conData['date'], color=discord.Colour.from_rgb(52, 235, 79))
+                embed.add_field(name="id", value=conData['id'][0])
+                if conData['folder'] != '':
+                    embed.add_field(name="path", value=conData['folder'])
+                if conData['description'] != '':
                     embed.add_field(name="description",
-                                    value=conData[4], inline=False)
+                                    value=conData['description'], inline=False)
                 embed.set_footer(text="取得: "+result['getTime'])
                 await conJuniorChannel.send(embed=embed)
             except Exception as e:
@@ -570,15 +570,15 @@ async def getData():
     if len(result['juniorStudy']) != 0:
         for studyData in result['juniorStudy']:
             try:
-                if studyData[3] != '':
+                if studyData['title'] != '':
                     embed = discord.Embed(
-                        title=studyData[3], description="投稿: "+studyData[1], color=discord.Colour.from_rgb(52, 229, 235))
+                        title=studyData['title'], description="投稿: "+studyData['date'], color=discord.Colour.from_rgb(52, 229, 235))
                 else:
                     embed = discord.Embed(
-                        title="中学学習教材更新通知", description="投稿: "+studyData[1], color=discord.Colour.from_rgb(52, 229, 235))
-                embed.add_field(name="id", value=studyData[0])
-                if studyData[2] != '':
-                    embed.add_field(name="path", value=studyData[2])
+                        title="中学学習教材更新通知", description="投稿: "+studyData['date'], color=discord.Colour.from_rgb(52, 229, 235))
+                embed.add_field(name="id", value=studyData['id'][0])
+                if studyData['folder'] != '':
+                    embed.add_field(name="path", value=studyData['folder'])
                 embed.set_footer(text="取得: "+result['getTime'])
                 await studyJuniorChannel.send(embed=embed)
             except Exception as e:
@@ -593,15 +593,15 @@ async def getData():
     if len(result['juniorSchoolNews']) != 0:
         for schoolNewsData in result['juniorSchoolNews']:
             try:
-                if schoolNewsData[3] != '':
+                if schoolNewsData['title'] != '':
                     embed = discord.Embed(
-                        title=schoolNewsData[3], description="投稿: "+schoolNewsData[1], color=discord.Colour.from_rgb(242, 245, 66))
+                        title=schoolNewsData['title'], description="投稿: "+schoolNewsData['date'], color=discord.Colour.from_rgb(242, 245, 66))
                 else:
                     embed = discord.Embed(
-                        title="中学学校通信更新通知", description="投稿: "+schoolNewsData[1], color=discord.Colour.from_rgb(242, 245, 66))
-                embed.add_field(name="id", value=schoolNewsData[0])
-                if schoolNewsData[2] != '':
-                    embed.add_field(name="path", value=schoolNewsData[2])
+                        title="中学学校通信更新通知", description="投稿: "+schoolNewsData['date'], color=discord.Colour.from_rgb(242, 245, 66))
+                embed.add_field(name="id", value=schoolNewsData['id'][0])
+                if schoolNewsData['folder'] != '':
+                    embed.add_field(name="path", value=schoolNewsData['folder'])
                 embed.set_footer(text="取得: "+result['getTime'])
                 await schoolNewsJuniorChannel.send(embed=embed)
             except Exception as e:
@@ -616,18 +616,18 @@ async def getData():
     if len(result['highCon']) != 0:
         for conData in result['highCon']:
             try:
-                if conData[3] != '':
+                if conData['title'] != '':
                     embed = discord.Embed(
-                        title=conData[3], description="投稿: "+conData[1], color=discord.Colour.from_rgb(52, 235, 79))
+                        title=conData['title'], description="投稿: "+conData['date'], color=discord.Colour.from_rgb(52, 235, 79))
                 else:
                     embed = discord.Embed(
-                        title="高校連絡事項更新通知", description="投稿: "+conData[1], color=discord.Colour.from_rgb(52, 235, 79))
-                embed.add_field(name="id", value=conData[0])
-                if conData[2] != '':
-                    embed.add_field(name="path", value=conData[2])
-                if conData[4] != '':
+                        title="高校連絡事項更新通知", description="投稿: "+conData['date'], color=discord.Colour.from_rgb(52, 235, 79))
+                embed.add_field(name="id", value=conData['id'][0])
+                if conData['folder'] != '':
+                    embed.add_field(name="path", value=conData['folder'])
+                if conData['description'] != '':
                     embed.add_field(name="description",
-                                    value=conData[4], inline=False)
+                                    value=conData['description'], inline=False)
                 embed.set_footer(text="取得: "+result['getTime'])
                 await conHighChannel.send(embed=embed)
             except Exception as e:
@@ -642,15 +642,15 @@ async def getData():
     if len(result['highStudy']) != 0:
         for studyData in result['highStudy']:
             try:
-                if studyData[3] != '':
+                if studyData['title'] != '':
                     embed = discord.Embed(
-                        title=studyData[3], description="投稿: "+studyData[1], color=discord.Colour.from_rgb(52, 229, 235))
+                        title=studyData['title'], description="投稿: "+studyData['date'], color=discord.Colour.from_rgb(52, 229, 235))
                 else:
                     embed = discord.Embed(
-                        title="高校学習教材更新通知", description="投稿: "+studyData[1], color=discord.Colour.from_rgb(52, 229, 235))
-                embed.add_field(name="id", value=studyData[0])
-                if studyData[2] != '':
-                    embed.add_field(name="path", value=studyData[2])
+                        title="高校学習教材更新通知", description="投稿: "+studyData['date'], color=discord.Colour.from_rgb(52, 229, 235))
+                embed.add_field(name="id", value=studyData['id'][0])
+                if studyData['folder'] != '':
+                    embed.add_field(name="path", value=studyData['folder'])
                 embed.set_footer(text="取得: "+result['getTime'])
                 await studyHighChannel.send(embed=embed)
             except Exception as e:
@@ -665,15 +665,15 @@ async def getData():
     if len(result['highSchoolNews']) != 0:
         for schoolNewsData in result['highSchoolNews']:
             try:
-                if schoolNewsData[3] != '':
+                if schoolNewsData['title'] != '':
                     embed = discord.Embed(
-                        title=schoolNewsData[3], description="投稿: "+schoolNewsData[1], color=discord.Colour.from_rgb(242, 245, 66))
+                        title=schoolNewsData['title'], description="投稿: "+schoolNewsData['date'], color=discord.Colour.from_rgb(242, 245, 66))
                 else:
                     embed = discord.Embed(
-                        title="高校学校通信更新通知", description="投稿: "+schoolNewsData[1], color=discord.Colour.from_rgb(242, 245, 66))
-                embed.add_field(name="id", value=schoolNewsData[0])
-                if schoolNewsData[2] != '':
-                    embed.add_field(name="path", value=schoolNewsData[2])
+                        title="高校学校通信更新通知", description="投稿: "+schoolNewsData['date'], color=discord.Colour.from_rgb(242, 245, 66))
+                embed.add_field(name="id", value=schoolNewsData['id'][0])
+                if schoolNewsData['folder'] != '':
+                    embed.add_field(name="path", value=schoolNewsData['folder'])
                 embed.set_footer(text="取得: "+result['getTime'])
                 await schoolNewsHighChannel.send(embed=embed)
             except Exception as e:
@@ -724,6 +724,7 @@ async def getNarouData():
         for eachData in result:
             embed = discord.Embed(title=eachData['title'], description="投稿: "+eachData['lastup']+"\nリンク: https://ncode.syosetu.com/"+eachData['ncode']+"/"+str(eachData['count']), color=discord.Colour.from_rgb(256-int(eachData['ncode'][1:2])*2, 256-int(eachData['ncode'][2:3])*2, 256-int(eachData['ncode'][3:4])*2))
             for channel in eachData['channels']:
+                print(channel)
                 sendChannel = client.get_channel(int(channel))
                 await sendChannel.send(embed=embed)
 
