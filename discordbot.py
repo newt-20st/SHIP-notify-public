@@ -470,6 +470,7 @@ async def getData():
     schoolNewsHighChannel = client.get_channel(841936546772156426)
     getLogChannel = client.get_channel(817400535639916544)
     result = shipcheck.main()
+    noneUpdateChannelList = []
     if len(result['juniorCon']) != 0:
         for conData in result['juniorCon']:
             try:
@@ -490,11 +491,7 @@ async def getData():
             except Exception as e:
                 await conJuniorChannel.send(str(e))
     else:
-        embed = discord.Embed(
-            title="中学連絡事項更新通知", color=discord.Colour.from_rgb(52, 235, 79))
-        embed.add_field(name="system-log", value='中学連絡事項に更新はありませんでした')
-        embed.set_footer(text="取得: "+result['getTime'])
-        await getLogChannel.send(embed=embed)
+        noneUpdateChannelList.append("juniorCon")
     if len(result['juniorStudy']) != 0:
         for studyData in result['juniorStudy']:
             try:
@@ -512,12 +509,7 @@ async def getData():
             except Exception as e:
                 await studyJuniorChannel.send(str(e))
     else:
-        embed = discord.Embed(
-            title="中学学習教材更新通知", color=discord.Colour.from_rgb(52, 235, 79))
-        embed.add_field(name="system-log",
-                        value='中学学習教材に更新はありませんでした')
-        embed.set_footer(text="取得: "+result['getTime'])
-        await getLogChannel.send(embed=embed)
+        noneUpdateChannelList.append("juniorStudy")
     if len(result['juniorSchoolNews']) != 0:
         for schoolNewsData in result['juniorSchoolNews']:
             try:
@@ -535,12 +527,7 @@ async def getData():
             except Exception as e:
                 await schoolNewsJuniorChannel.send(str(e))
     else:
-        embed = discord.Embed(
-            title="中学学校通信更新通知", color=discord.Colour.from_rgb(52, 235, 79))
-        embed.add_field(name="system-log",
-                        value='中学学校通信に更新はありませんでした', inline=False)
-        embed.set_footer(text="取得: "+result['getTime'])
-        await getLogChannel.send(embed=embed)
+        noneUpdateChannelList.append("juniorSchoolNews")
     if len(result['highCon']) != 0:
         for conData in result['highCon']:
             try:
@@ -561,12 +548,7 @@ async def getData():
             except Exception as e:
                 await conHighChannel.send(str(e))
     else:
-        embed = discord.Embed(
-            title="高校連絡事項更新通知", color=discord.Colour.from_rgb(52, 235, 79))
-        embed.add_field(name="system-log",
-                        value='高校連絡事項に更新はありませんでした', inline=False)
-        embed.set_footer(text="取得: "+result['getTime'])
-        await getLogChannel.send(embed=embed)
+        noneUpdateChannelList.append("highCon")
     if len(result['highStudy']) != 0:
         for studyData in result['highStudy']:
             try:
@@ -584,12 +566,7 @@ async def getData():
             except Exception as e:
                 await studyHighChannel.send(str(e))
     else:
-        embed = discord.Embed(
-            title="高校学習教材更新通知", color=discord.Colour.from_rgb(52, 235, 79))
-        embed.add_field(name="system-log",
-                        value='高校学習教材に更新はありませんでした', inline=False)
-        embed.set_footer(text="取得: "+result['getTime'])
-        await getLogChannel.send(embed=embed)
+        noneUpdateChannelList.append("highStudy")
     if len(result['highSchoolNews']) != 0:
         for schoolNewsData in result['highSchoolNews']:
             try:
@@ -607,11 +584,11 @@ async def getData():
             except Exception as e:
                 await schoolNewsHighChannel.send(str(e))
     else:
+        noneUpdateChannelList.append("highSchoolNews")
+    if len(noneUpdateChannelList) != 0:
+        body = result['getTime'] + "の取得で以下のチャンネルに更新がありませんでした。\n" + str(noneUpdateChannelList)
         embed = discord.Embed(
-            title="高校学校通信更新通知", color=discord.Colour.from_rgb(52, 235, 79))
-        embed.add_field(name="system-log",
-                        value='高校学校通信に更新はありませんでした', inline=False)
-        embed.set_footer(text="取得: "+result['getTime'])
+            title="未更新チャンネル", description=body, color=discord.Colour.from_rgb(52, 235, 79))
         await getLogChannel.send(embed=embed)
     if len(result['highCon']) != 0 or len(result['highStudy']) != 0:
         try:
