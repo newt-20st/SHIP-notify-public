@@ -78,13 +78,12 @@ async def on_message(message):
             content += '\n`sh!recently` SHIPの最近の更新を一覧表示。省略形は`-r`'
             content += '\n`sh!when` SHIPの更新を取得する日時を表示'
             content += '\n`sh!wiki` Wikipediaを検索'
-            content += '\n`sh!nhk` NHKで現在放送している番組を取得'
             content += '\n\n＜「小説家になろう」関連コマンド＞ ※DMチャンネルでのみ利用可能'
             content += '\n`n!when` 更新を取得している日時の取得'
             content += '\n`n!add` 更新を通知する小説の追加'
             content += '\n`n!remove` 更新を通知する小説の削除'
             content += '\n`n!list` 更新を通知している小説一覧を表示'
-            embed = discord.Embed(title="コマンド一覧 - lastupdate: 2021/06/19", description=content, color=discord.Colour.from_rgb(190, 252, 3))
+            embed = discord.Embed(title="コマンド一覧 - lastupdate: 2021/07/06", description=content, color=discord.Colour.from_rgb(190, 252, 3))
             await message.channel.send(embed=embed)
         elif 'info' in message.content or '-i' in message.content:
             flag = False
@@ -257,77 +256,6 @@ async def on_message(message):
             await message.channel.send('にゃーん')
             wait_message = await client.wait_for("message", check=check)
             await message.channel.send(wait_message.content)
-        elif 'nhk' in message.content:
-            jsonLoad = json.load(
-                open('json/nhk.json', 'r', encoding="utf-8_sig"))
-            jsonAreaData = jsonLoad["areas"]
-            jsonChannelData = jsonLoad["channels"]
-            body = ''
-            idList = []
-            for i in jsonAreaData:
-                body += '\n`' + i['id'] + '` **'+i['title']+'**'
-                idList.append(i['id'])
-            flag = False
-            if len(message.content.split()) == 3:
-                if isint(message.content.split()[1]) and isint(message.content.split()[1]):
-                    nhkAreaId = message.content.split()[1]
-                    nhkChannelId = int(message.content.split()[2]) - 1
-                    if nhkAreaId in idList and nhkChannelId < len(jsonChannelData):
-                        nhkAreaLen = idList.index(nhkAreaId)
-                        flag = True
-            if flag == False:
-                await message.channel.send('🗾地域を選択してください'+body)
-                try:
-                    nhkAreaMessage = await client.wait_for("message", check=check, timeout=60)
-                    if nhkAreaMessage.content not in idList:
-                        if 'sh!' in nhkAreaMessage.content:
-                            await message.reply("別のコマンドが実行されたためこのセッションは終了しました。")
-                        else:
-                            await nhkAreaMessage.reply("入力された文字は数字ではありません。最初からやり直してください。")
-                        return
-                    nhkAreaId = nhkAreaMessage.content
-                    nhkAreaLen = idList.index(nhkAreaId)
-                    body = ''
-                    for c, eachData in enumerate(jsonChannelData, 1):
-                        body += '\n`' + str(c+1) + '` **'+eachData['title']+'**'
-                    await message.channel.send('📺チャンネルを選択してください'+body)
-                    try:
-                        nhkChannelMessage = await client.wait_for("message", check=check, timeout=60)
-                        if isint(nhkChannelMessage.content) == False:
-                            if 'sh!' in nhkChannelMessage.content:
-                                await message.reply("別のコマンドが実行されたためこのセッションは終了しました。")
-                            else:
-                                await nhkChannelMessage.reply("入力された文字は数字ではありません。最初からやり直してください。")
-                            return
-                        nhkChannelId = int(nhkChannelMessage.content) - 1
-                        if nhkChannelId > len(jsonChannelData):
-                            await nhkChannelMessage.reply("入力された数字に対応するチャンネルがありません。最初からやり直してください。")
-                            return
-                    except Exception as e:
-                        await message.reply("セッションがタイムアウトしました"+str(e))
-                except Exception as e:
-                    await message.reply("セッションがタイムアウトしました"+str(e))
-            response = requests.get(
-                "https://api.nhk.or.jp/v2/pg/now/"+nhkAreaId+"/"+jsonChannelData[nhkChannelId]['id']+'.json?key='+os.environ['NHK_ACCESS_KEY'])
-            responseJson = response.json()
-            try:
-                responseDataPresent = responseJson['nowonair_list'][jsonChannelData[nhkChannelId]['id']]['present']
-                responseDataFollowing = responseJson['nowonair_list'][
-                    jsonChannelData[nhkChannelId]['id']]['following']
-                present = '`title` **'+responseDataPresent['title']+'**\n`subtitle` '+responseDataPresent['subtitle'] + \
-                    '\n`start` ' + \
-                    responseDataPresent['start_time']+'\n`end` ' + \
-                    responseDataPresent['end_time']+'\n'
-                following = '`title` **'+responseDataFollowing['title']+'**\n`subtitle` '+responseDataFollowing['subtitle'] + \
-                    '\n`start` '+responseDataFollowing['start_time'] + \
-                    '\n`end` '+responseDataFollowing['end_time']+'\n'
-                embed = discord.Embed(title='📺'+jsonChannelData[nhkChannelId]['title'] +
-                                      '('+jsonAreaData[nhkAreaLen]['title']+')', color=discord.Colour.from_rgb(50, 168, 82))
-                embed.add_field(name="▶現在放送中", value=present, inline=False)
-                embed.add_field(name="▶▶次に放送予定", value=following, inline=False)
-                await message.channel.send(embed=embed)
-            except Exception as e:
-                await message.reply("エラー"+str(e))
         elif 'when' in message.content:
             configChannel = client.get_channel(820242721330561044)
             messages = await configChannel.history().flatten()
